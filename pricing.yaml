@@ -1,0 +1,34 @@
+# Official per-million-token prices converted CNY -> USD at 6.72 CNY/USD
+# (2026-08-25 user-provided rate; update if submitting with a different rate).
+#
+# Sources:
+# - DeepSeek (https://api-docs.deepseek.com/zh-cn/quick_start/pricing,
+#   peak-hour prices, CNY/M): v4-flash input-cache-hit 0.10, input-miss 3.0,
+#   output 9.0; v4-pro hit 0.30, miss 9.0, output 27.0. DeepSeek bills cache
+#   reads at the "hit" rate and reports no separate cache-creation pricing,
+#   so cache_creation is 0.
+# - Zhipu GLM (https://open.bigmodel.cn/pricing, user-provided table, CNY/M):
+#   GLM-5.2/5.3 input 8, output 28, cached input 2, the "限时免费" column
+#   (knowledge/tool bench) is free => 0. GLM separates no cache-creation
+#   field => 0.
+models:
+  - name: deepseek-v4-flash
+    input_per_million_usd: 0.45      # 3.0 CNY peak cache-miss
+    cache_read_per_million_usd: 0.01  # 0.10 CNY peak cache-hit
+    cache_creation_per_million_usd: 0.0
+    output_per_million_usd: 1.34      # 9.0 CNY peak
+  - name: deepseek-v4-pro
+    input_per_million_usd: 1.34       # 9.0 CNY peak cache-miss
+    cache_read_per_million_usd: 0.04  # 0.30 CNY peak cache-hit
+    cache_creation_per_million_usd: 0.0
+    output_per_million_usd: 4.02      # 27.0 CNY peak
+  - name: glm-5.2
+    input_per_million_usd: 1.19       # 8 CNY
+    cache_read_per_million_usd: 0.30  # 2 CNY cached input
+    cache_creation_per_million_usd: 0.0
+    output_per_million_usd: 4.17      # 28 CNY
+  - name: glm-5.3
+    input_per_million_usd: 1.19       # 8 CNY
+    cache_read_per_million_usd: 0.30  # 2 CNY cached input
+    cache_creation_per_million_usd: 0.0
+    output_per_million_usd: 4.17      # 28 CNY
