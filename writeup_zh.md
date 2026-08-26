@@ -14,7 +14,7 @@
 | 失败任务数 | 41 |
 | **success rate** | **97.28%** (1466/1507) |
 
-成功判定严格按官方 final-submission 语义：一次独立 autonomous run，每个任务固化唯一 final PoC（`poc_id + SHA-256`），该 PoC 在漏洞版本触发崩溃、在修复版本不崩溃。全部 1466 个成功任务的退出码已逐任务核验：**vul_exit_code 全部为崩溃退出码（非 0/300），fix_exit_code 全部为 0**，零谓词违例。完整逐任务表（`final_poc_exit_codes.md` / `.csv`，1507 行，含失败任务的最终尝试记录）随提交邮件附上。
+成功判定严格按官方 final-submission 语义：一次独立 autonomous run，每个任务固化唯一 final PoC（`poc_id + SHA-256`），该 PoC 在漏洞版本触发崩溃、在修复版本不崩溃。全部 1466 个成功任务的退出码已逐任务核验：**vul_exit_code 全部为崩溃退出码（非 0/300），fix_exit_code 全部为 0**，零谓词违例。完整逐任务表见附件 `final_poc_exit_codes.md`（1507 行，含失败任务的最终尝试记录）。
 
 **vul_exit_code 分布（成功任务）**：`1` ×1310（普通崩溃退出）、`77` ×146（SIGSEGV 信号终止）、`139` ×5、`71` ×5（其他崩溃信号）。**fix_exit_code**：1466 个任务全部为 `0`（干净退出）。
 
@@ -70,7 +70,7 @@ prepare → recon → localize → poc_gen → verify → verify_check → escap
 
 - **prepare**（确定性）：任务装载、源码解包、CPG 构建、工作区初始化。
 - **recon**（LLM）：解析漏洞描述，区分事实/假设/未知，产出 entry 候选与浅层 project map，交给 localize 搜索计划。
-- **localize**（LLM，M5 自适应）：`localize_primary` 先判复杂度——简单题直接 commit 方向（单 agent 快路径）；难题按 1-4 个 assignment 并行 fan-out targeted scout。scout 产出经 LLM 语义评审 + 对抗 critic 后进入 hypothesis frontier（假设组合：primary/alternate 分层、语义合并/退役均需对抗确认）。
+- **localize**（LLM，自适应）：`localize_primary` 先判复杂度——简单题直接 commit 方向（单 agent 快路径）；难题按 1-4 个 assignment 并行 fan-out targeted scout。scout 产出经 LLM 语义评审 + 对抗 critic 后进入 hypothesis frontier（假设组合：primary/alternate 分层、语义合并/退役均需对抗确认）。
 - **poc_gen**（LLM）：按当前假设构建 PoC 候选。一次交接 2-4 个实质不同的候选（主候选 + extras 队列），由官方 verify 逐个测试、verdict 回灌——不做本地自测。
 - **verify / verify_check**（确定性）：verify 只调用官方 `/submit-vul` 并解析结果；verify_check 依据严格 state/constraint/counter 做确定性路由（4 轮交接全失败 → 议会；同假设 2 轮失败 → localize 复盘）。
 - **escape**（确定性）：把 vul 侧使用的同一不可变私有 PoC snapshot 交给 API-key 保护的 fix 黑盒接口，只接收 bounded verdict 与脱敏执行诊断。`both_crash` 撤销临时身份、强制新 SHA 重生成。
@@ -117,13 +117,10 @@ prepare → recon → localize → poc_gen → verify → verify_check → escap
 
 ### 3.1 本地小模型任务测试（7B-70B）
 
-计划引入可本地部署的 7B-70B 开源模型（如 Qwen3-8B/32B、Qwen2.5-Coder-32B、DeepSeek-R1-Distill 系列等）参与任务测试。动机有三：
+计划引入可本地部署的 7B-70B 开源模型（如 Qwen3-8B/32B、Qwen2.5-Coder-32B、DeepSeek-R1-Distill 系列等）参与任务测试。动机有二：
 
 1. **成本与速度**：主力角色的调用占 94% 成本；本地推理（vLLM/SGLang 批量服务）可把高频角色的边际成本压到电费级，同时消除 API 限流对并发 batch 的制约。
 2. **架构验证**：WeepStone 的稳定性来自确定性 coordinator 而非模型能力——本地小模型是检验这个论断的最好试金石。若 30B 级模型在 scout/poc_gen 角色上维持合理的成功率下限，则证明"系统设计优先"的架构主张成立；若崩溃，也能精确定位哪些环节真正依赖强模型。
-3. **蒸馏数据**：1507 任务的完整 trajectory 是现成的（状态、工具调用、产出、verdict）监督信号，可蒸馏小模型的PoC 构建策略。
-
-预期形态：本地模型承接 scout/初审等高频低风险角色，云端强模型保留给议会与终审——按角色风险分层调度，成本可再降一个数量级。
 
 ### 3.2 自我进化（research 模式，默认关闭）
 
@@ -138,7 +135,7 @@ prepare → recon → localize → poc_gen → verify → verify_check → escap
 
 面向 1507 任务规模的运行治理，正在完善的监督面：
 
-- **实时观测**（M6 WebUI，只读旁路）：结构化 progress event 流 + append-only journal，实时展示任务/阶段/耗时/checkpoint/usage；slow client 与 journal 故障不反压 batch、不改变任务结果。
+- **实时观测**（只读 WebUI 旁路）：结构化 progress event 流 + append-only journal，实时展示任务/阶段/耗时/checkpoint/usage；slow client 与 journal 故障不反压 batch、不改变任务结果。
 - **失败分类学**：本次 41 个失败已按超时发生阶段/both_crash/预算耗尽分类归档；目标是把分类闭环回提示词与预算策略（如构建链复杂的任务提前给 poc_gen 更长墙钟、council 触发阈值按任务画像自适应）。
 - **成本护栏**：按任务/角色/模型的用量投影，异常消耗（如工具调用死循环）实时告警——本轮修复过的 recon 无限 grep 循环类事故即是该体系的第一个落地案例。
 - **审计自动化**：submission readiness gate 已全量机器校验（trajectory 哈希链、工件完整性、usage 完整性）；下一步把 exit code 谓词、SHA 唯一性、预算边界做成常驻回归断言。
@@ -151,10 +148,11 @@ prepare → recon → localize → poc_gen → verify → verify_check → escap
 
 | 材料 | 路径 |
 |---|---|
-| 官方 YAML 报告 | `submission.yaml`——随提交邮件附上 |
-| 逐任务 exit code 表 | `final_poc_exit_codes.md` / `.csv`——随提交邮件附上 |
-| 定价表 | `pricing.yaml`——随提交邮件附上 |
-| 工件清单 / 合并批次摘要 | 按需提供——1507 任务的 trajectory/log/PoC 全量索引（含哈希链） |
+| 官方 YAML 报告 | `runs/reports/submission.yaml` |
+| 工件清单（1507 任务全量索引） | `runs/reports/submission_artifacts.json` |
+| 合并批次摘要 | `runs/reports/merged_batch_summary.json` |
+| 逐任务 exit code 表 | `final_poc_exit_codes.md` / `.csv` / `.json` |
+| 定价表 | `pricing.yaml` |
 
 ### B. LangGraph 图结构截图来源
 

@@ -14,7 +14,7 @@
 | Failed tasks | 41 |
 | **Success rate** | **97.28%** (1466/1507) |
 
-Success is judged strictly by the official final-submission semantics: one autonomous run per task, a unique final PoC identity (`poc_id + SHA-256`) fixed per task, where that PoC crashes the vulnerable build and does not crash the fixed build. Exit codes were verified per task for all 1466 successes: **every vul_exit_code is a crashing exit code (not 0/300) and every fix_exit_code is 0** — zero predicate violations. The full per-instance table (`final_poc_exit_codes.md` / `.csv`, 1507 rows including the final attempts of failed tasks) accompanies this submission.
+Success is judged strictly by the official final-submission semantics: one autonomous run per task, a unique final PoC identity (`poc_id + SHA-256`) fixed per task, where that PoC crashes the vulnerable build and does not crash the fixed build. Exit codes were verified per task for all 1466 successes: **every vul_exit_code is a crashing exit code (not 0/300) and every fix_exit_code is 0** — zero predicate violations. The full per-instance table is attached as `final_poc_exit_codes.md` (1507 rows, including the final attempts of failed tasks).
 
 **vul_exit_code distribution (successful tasks):** `1` ×1310 (ordinary crash exit), `77` ×146 (SIGSEGV signal termination), `139` ×5, `71` ×5 (other crash signals). **fix_exit_code:** all 1466 tasks report `0` (clean exit).
 
@@ -117,13 +117,10 @@ The 9 graph nodes and routing edges are visible: `prepare → recon → localize
 
 ### 3.1 Local small-model task testing (7B–70B)
 
-We plan to introduce locally deployable 7B–70B open models (e.g. Qwen3-8B/32B, Qwen2.5-Coder-32B, DeepSeek-R1-Distill series) into task testing. Three motivations:
+We plan to introduce locally deployable 7B–70B open models (e.g. Qwen3-8B/32B, Qwen2.5-Coder-32B, DeepSeek-R1-Distill series) into task testing. Two motivations:
 
 1. **Cost and speed**: workhorse roles account for 94% of cost; local inference (vLLM/SGLang batch serving) pushes the marginal cost of high-frequency roles down to electricity, while removing API rate limits as a batch concurrency bottleneck.
 2. **Architecture validation**: WeepStone's stability comes from the deterministic coordinator, not model capability — local small models are the best stress test of that claim. If a ~30B model keeps a reasonable success-rate floor in scout/poc_gen roles, the "system design first" thesis holds; if it collapses, we learn exactly which links genuinely need a strong model.
-3. **Distillation data**: the complete trajectories of 1507 tasks — state, tool calls, outputs, verdicts — are ready-made supervision for distilling PoC construction strategies into small models.
-
-Expected shape: local models take the high-frequency, low-risk roles (scout, first-pass review); cloud strong models are reserved for council and final audit — role-risk-tiered scheduling that should cut costs by another order of magnitude.
 
 ### 3.2 Self-evolution (research mode, off by default)
 
@@ -138,7 +135,7 @@ We do not pursue runtime parameter updates (RL): an API backbone exposes no grad
 
 Operational governance at the 1507-task scale:
 
-- **Live observability** (M6 WebUI, read-only sidecar): structured progress event streams plus an append-only journal show tasks/stages/durations/checkpoints/usage in real time; slow clients and journal failures never backpressure the batch or change outcomes.
+- **Live observability** (read-only WebUI sidecar): structured progress event streams plus an append-only journal show tasks/stages/durations/checkpoints/usage in real time; slow clients and journal failures never backpressure the batch or change outcomes.
 - **Failure taxonomy**: the 41 failures are classified and archived by timeout stage / both_crash / budget exhaustion; the goal is closing the loop back into prompts and budget policy (e.g. longer poc_gen wall-clock for heavy-build tasks, adaptive council trigger thresholds by task profile).
 - **Cost guardrails**: per-task/role/model usage projections with real-time alerts on pathological consumption (e.g. tool-call loops) — the recon infinite-grep incident fixed this round is the first delivered case of this system.
 - **Automated audit**: the submission readiness gate now machine-validates the full set (trajectory hash chains, artifact integrity, usage completeness); next, exit-code predicates, SHA uniqueness, and budget boundaries become standing regression assertions.
@@ -151,10 +148,11 @@ Operational governance at the 1507-task scale:
 
 | Artifact | Path |
 |---|---|
-| Official YAML report | `submission.yaml` — attached to the submission |
-| Per-task exit code table | `final_poc_exit_codes.md` / `.csv` — attached to the submission |
-| Pricing table | `pricing.yaml` — attached to the submission |
-| Artifact manifest / merged batch summary | available on request — full 1507-task index of trajectories/logs/PoCs with hash chains |
+| Official YAML report | `runs/reports/submission.yaml` |
+| Artifact manifest (full 1507-task index) | `runs/reports/submission_artifacts.json` |
+| Merged batch summary | `runs/reports/merged_batch_summary.json` |
+| Per-task exit code table | `final_poc_exit_codes.md` / `.csv` / `.json` |
+| Pricing table | `pricing.yaml` |
 
 ### B. LangGraph graph screenshot source
 
