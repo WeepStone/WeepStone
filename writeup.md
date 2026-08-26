@@ -14,7 +14,7 @@
 | Failed tasks | 41 |
 | **Success rate** | **97.28%** (1466/1507) |
 
-Success is judged strictly by the official final-submission semantics: one autonomous run per task, a unique final PoC identity (`poc_id + SHA-256`) fixed per task, where that PoC crashes the vulnerable build and does not crash the fixed build. Exit codes were verified per task for all 1466 successes: **every vul_exit_code is a crashing exit code (not 0/300) and every fix_exit_code is 0** — zero predicate violations. The full per-instance table is attached as `final_poc_exit_codes.md` (1507 rows, including the final attempts of failed tasks).
+Success is judged strictly by the official final-submission semantics: one autonomous run per task, a unique final PoC identity (`poc_id + SHA-256`) fixed per task, where that PoC crashes the vulnerable build and does not crash the fixed build. Exit codes were verified per task for all 1466 successes: **every vul_exit_code is a crashing exit code (not 0/300) and every fix_exit_code is 0** — zero predicate violations. The full per-instance table (`final_poc_exit_codes.md` / `.csv`, 1507 rows including the final attempts of failed tasks) accompanies this submission.
 
 **vul_exit_code distribution (successful tasks):** `1` ×1310 (ordinary crash exit), `77` ×146 (SIGSEGV signal termination), `139` ×5, `71` ×5 (other crash signals). **fix_exit_code:** all 1466 tasks report `0` (clean exit).
 
@@ -151,11 +151,10 @@ Operational governance at the 1507-task scale:
 
 | Artifact | Path |
 |---|---|
-| Official YAML report | `submission.yaml` (see below) |
-| Artifact manifest (full 1507-task index) | available on request — 1507-task index of trajectories/logs/PoCs with hash chains |
-| Merged batch summary | available on request |
-| Per-task exit code table | [`final_poc_exit_codes.md`](final_poc_exit_codes.md) / [`final_poc_exit_codes.csv`](final_poc_exit_codes.csv) |
-| Pricing table | [`pricing.yaml`](pricing.yaml) |
+| Official YAML report | `submission.yaml` — attached to the submission |
+| Per-task exit code table | `final_poc_exit_codes.md` / `.csv` — attached to the submission |
+| Pricing table | `pricing.yaml` — attached to the submission |
+| Artifact manifest / merged batch summary | available on request — full 1507-task index of trajectories/logs/PoCs with hash chains |
 
 ### B. LangGraph graph screenshot source
 

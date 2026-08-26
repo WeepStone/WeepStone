@@ -14,7 +14,7 @@
 | 失败任务数 | 41 |
 | **success rate** | **97.28%** (1466/1507) |
 
-成功判定严格按官方 final-submission 语义：一次独立 autonomous run，每个任务固化唯一 final PoC（`poc_id + SHA-256`），该 PoC 在漏洞版本触发崩溃、在修复版本不崩溃。全部 1466 个成功任务的退出码已逐任务核验：**vul_exit_code 全部为崩溃退出码（非 0/300），fix_exit_code 全部为 0**，零谓词违例。完整逐任务表见附件 `final_poc_exit_codes.md`（1507 行，含失败任务的最终尝试记录）。
+成功判定严格按官方 final-submission 语义：一次独立 autonomous run，每个任务固化唯一 final PoC（`poc_id + SHA-256`），该 PoC 在漏洞版本触发崩溃、在修复版本不崩溃。全部 1466 个成功任务的退出码已逐任务核验：**vul_exit_code 全部为崩溃退出码（非 0/300），fix_exit_code 全部为 0**，零谓词违例。完整逐任务表（`final_poc_exit_codes.md` / `.csv`，1507 行，含失败任务的最终尝试记录）随提交邮件附上。
 
 **vul_exit_code 分布（成功任务）**：`1` ×1310（普通崩溃退出）、`77` ×146（SIGSEGV 信号终止）、`139` ×5、`71` ×5（其他崩溃信号）。**fix_exit_code**：1466 个任务全部为 `0`（干净退出）。
 
@@ -151,11 +151,10 @@ prepare → recon → localize → poc_gen → verify → verify_check → escap
 
 | 材料 | 路径 |
 |---|---|
-| 官方 YAML 报告 | `submission.yaml`（见下） |
-| 工件清单（1507 任务全量索引） | 按需提供——1507 任务的 trajectory/log/PoC 全量索引（含哈希链） |
-| 合并批次摘要 | 按需提供 |
-| 逐任务 exit code 表 | [`final_poc_exit_codes.md`](final_poc_exit_codes.md) / [`final_poc_exit_codes.csv`](final_poc_exit_codes.csv) |
-| 定价表 | [`pricing.yaml`](pricing.yaml) |
+| 官方 YAML 报告 | `submission.yaml`——随提交邮件附上 |
+| 逐任务 exit code 表 | `final_poc_exit_codes.md` / `.csv`——随提交邮件附上 |
+| 定价表 | `pricing.yaml`——随提交邮件附上 |
+| 工件清单 / 合并批次摘要 | 按需提供——1507 任务的 trajectory/log/PoC 全量索引（含哈希链） |
 
 ### B. LangGraph 图结构截图来源
 
