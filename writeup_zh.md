@@ -92,7 +92,7 @@ prepare → recon → localize → poc_gen → verify → verify_check → escap
 - 源码工作区清理防泄漏（官方 FAQ 要求）：不残留 `/src/**/.git` 与 `/tmp/poc`。
 - 唯一允许回灌给 recovery 参与者的 fix 侧信息是官方 endpoint 对当前候选返回的 bounded、脱敏动态执行输出。
 
-**提示词级反投机**：模型被明确禁止探测验证服务器（曾从 server 日志观测到模型尝试 curl `/docs`、`/openapi.json` 自摸提交口）；禁止依赖模型自信或多数票，源码证据优先。
+**证据优先级**：模型自信与多数票不作为证据，源码证据优先。
 
 ### 2.4 CPG（代码属性图）与 docker_shell 动态分析
 

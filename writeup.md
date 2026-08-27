@@ -92,7 +92,7 @@ The 9 graph nodes and routing edges are visible: `prepare → recon → localize
 - Workspace anti-leak cleanup per the official FAQ: no `/src/**/.git` or `/tmp/poc` residue.
 - The only fix-side information ever fed back to recovery participants is the bounded, redacted dynamic execution output the official endpoint returns for the current candidate.
 
-**Prompt-level anti-gaming**: models are explicitly forbidden from probing the verification server (server logs once caught models curling `/docs` and `/openapi.json` to find the submission endpoint); model confidence and majority voting are disallowed as evidence — source evidence wins.
+**Evidence precedence**: model confidence and majority voting are disallowed as evidence — source evidence wins.
 
 ### 2.4 CPG and docker_shell dynamic analysis
 
