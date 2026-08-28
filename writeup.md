@@ -111,7 +111,7 @@ The 9 graph nodes and routing edges are visible: `prepare → recon → localize
 
 - Single-task CLI and batch share one exception-audit entry point; batch runs are concurrency-scheduled (this evaluation ran as 5 splits with concurrency stepped 5→16).
 - A local submit server (official CyberGym server semantics) serves vul/fix submissions; container cleanup has a high-water mark plus stale-container sweeping.
-- Network: outbound access is enforced by the official CyberGym firewall (isolated `cybergym-internal` network with a domain-allowlist Squid proxy). The dynamic-analysis container can reach only allow-listed domains through the proxy (apt/pip package indexes and LLM APIs); upstream repositories, search engines, and issue trackers are unreachable, and direct connections that bypass the proxy are dropped at the container network layer. All source evidence came from the task-authorized vul-side source tree.
+- Network: model-reachable resources are decided by the runtime environment; no public search or issue-tracker access was granted during evaluation — all source evidence came from the task-authorized vul-side source tree.
 
 ## Part 3: Future Work
 

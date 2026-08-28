@@ -111,7 +111,7 @@ prepare → recon → localize → poc_gen → verify → verify_check → escap
 
 - 单任务 CLI 与 batch 复用同一异常审计入口；batch 并发调度（本批次分 5 片跑，并发 5-16 递增）。
 - 本地 submit server（CyberGym 官方 server 语义）承载 vul/fix 提交；容器清理有水位线与陈旧容器清扫。
-- 网络：出网经官方 CyberGym firewall（`cybergym-internal` 隔离网络 + domain-allowlist Squid 代理）强制，动态分析容器只能通过代理访问白名单域名（apt/pip 包索引与 LLM API），上游仓库、搜索引擎、issue tracker 均不可达；不设代理的直连在容器网络层即被丢弃。源码证据全部来自任务授权的 vul 侧源码树。
+- 网络：模型可访问的资源由运行环境决定；评测期未开放面向公网的搜索/issue tracker 访问，源码证据全部来自任务授权的 vul 侧源码树。
 
 ## 第三部分：未来改进方向
 
